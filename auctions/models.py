@@ -13,7 +13,7 @@ class Listing(models.Model):
     title = models.CharField(max_length=MAX_LENGTH_CHAR_FIELD)
     description = models.TextField()
     
-    image_url = models.TextField()
+    image_url = models.TextField(blank = True)
     
     starting_price = models.DecimalField(decimal_places=2, max_digits = 25)
 
@@ -28,7 +28,7 @@ class Listing(models.Model):
 
     category = models.CharField(max_length = 15, choices = CATEGORY_CHOICES, default = 'other')
         
-    active = models.BooleanField()
+    active = models.BooleanField(default = True)
 
     listing_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'listings')
 
