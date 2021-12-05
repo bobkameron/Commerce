@@ -5,29 +5,40 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import User
-
+from .models import User, Listing, Bid, Comment
 
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html",{
+        'listings': Listing.objects.filter(active = True)
+    })
 
 @login_required
 def watchlist(request):
-    pass 
+    return render(request, "auctions/watchlist.html", {
+        'listings': Listing.objects.filter( watching__id = request.user.id   )
+    })
 
 @login_required
 def create_listing(request):
-    pass 
+    return render(request, "auctions/create_listing.html")
 
 def categories(request):
-    pass 
+    return render(request, "auctions/categories.html")
 
 def category(request, category_string):
-    pass 
+    
+    return HttpResponse("Category")
 
 def listing (request, listing_id):
-    pass 
+    errorMessage = None 
+    listing = Listing.objects.get(id = listing_id)
+    if not listing:
+        errorMessage = "Invalid Listing"
 
+    return render(request, "auctions/listing.html", {
+        'listing': listing,
+        'message' : errorMessage 
+    })
 
 def login_view(request):
     if request.method == "POST":
