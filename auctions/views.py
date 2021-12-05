@@ -5,17 +5,27 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
+from django.db.models import Count, Max 
+
+
 from .models import User, Listing, Bid, Comment
+
+emptyMessage = "empty_message"
+heading = "heading"
 
 def index(request):
     return render(request, "auctions/index.html",{
-        'listings': Listing.objects.filter(active = True)
+        'listings': Listing.objects.filter(active = True),
+        emptyMessage : "No Active Listings",
+        heading: "Active Listings"
     })
 
 @login_required
 def watchlist(request):
-    return render(request, "auctions/watchlist.html", {
-        'listings': Listing.objects.filter( watching__id = request.user.id   )
+    return render(request, "auctions/index.html", {
+        'listings': Listing.objects.filter( watching__id = request.user.id   ),
+        emptyMessage: "No Listings are currently in your Watchlist. To add items to your watchlist click on an active listing and add it to your watchlist.",
+        heading: 'Your Watchlist'
     })
 
 @login_required
@@ -23,11 +33,28 @@ def create_listing(request):
     return render(request, "auctions/create_listing.html")
 
 def categories(request):
-    return render(request, "auctions/categories.html")
+    return render(request, "auctions/categories.html", {
+        'categories': Listing.CATEGORIES,
+        heading: 'Auction Categories'
+    })
 
 def category(request, category_string):
+    '''
+    category_string must be among the list of choices in Listing.CATEGORIES
+    '''
+    errorMessage = None 
+    if category_string not in Listing.CATEGORIES:
+        errorMessage = "This is not a valid category"
     
-    return HttpResponse("Category")
+    string_rep = "" 
+    if not errorMessage: string_rep = Listing.CATEGORIES[category_string]
+
+    return render(request, "auctions/index.html", {
+        'message': errorMessage,
+        'listings': Listing.objects.filter(category = "category_string"),
+        emptyMessage: "No Listings in this Category",
+        heading: "Auction Listings in Category: "+ string_rep,
+    })
 
 def listing (request, listing_id):
     errorMessage = None 
@@ -39,6 +66,7 @@ def listing (request, listing_id):
         'listing': listing,
         'message' : errorMessage 
     })
+
 
 def login_view(request):
     if request.method == "POST":

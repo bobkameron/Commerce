@@ -6,9 +6,7 @@ MAX_LENGTH_CHAR_FIELD = 200
 class User(AbstractUser):
     pass 
 
-
 class Listing(models.Model):
-
 
     title = models.CharField(max_length=MAX_LENGTH_CHAR_FIELD)
     description = models.TextField()
@@ -16,6 +14,21 @@ class Listing(models.Model):
     image_url = models.TextField(blank = True)
     
     starting_price = models.DecimalField(decimal_places=2, max_digits = 25)
+
+    
+
+    created_datetime = models.DateTimeField( auto_now_add = True )
+
+    closed_datetime = models.DateTimeField( null = True, blank = True )
+
+    #number_bids = models.PositiveIntegerField(default = 0 )
+
+    CATEGORIES = {'fashion': 'Fashion'  ,
+        'electronics': 'Electronics',
+        'art': 'Art and Collectibles',
+        'home': 'Home and Garden',
+        'toys': 'Toys',
+        'other':'Other' }
 
     CATEGORY_CHOICES = [
         ('fashion', 'Fashion'   ),
@@ -38,11 +51,14 @@ class Listing(models.Model):
 class Bid(models.Model):
     amount = models.DecimalField(decimal_places=2, max_digits = 25)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name = "bids")
-    
+    created_datetime = models.DateTimeField( auto_now_add = True )
+
     user = models.ForeignKey(User, on_delete= models.CASCADE, related_name = "bids")
+
 
 class Comment(models.Model):
     text = models.CharField(max_length=MAX_LENGTH_CHAR_FIELD)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name = 'comments')
+    created_datetime = models.DateTimeField( auto_now_add = True )
 
     user = models.ForeignKey(User, on_delete= models.CASCADE, related_name = 'comments')
