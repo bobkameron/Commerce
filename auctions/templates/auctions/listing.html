@@ -2,5 +2,110 @@
 
 {% block body %}
     
+    {% if message %} 
+        <p> {{ message }}</p>
+
+    {% else  %}
+        {% if not listing.active and listing.highest_bid.user == user %} 
+            <p>  Congratulations! You have won the listing. </p>
+        {% endif  %}
+
+        <p>
+            {% if user.is_authenticated %}
+                {% if in_watchlist %}
+                This item is in your watchlist. 
+                <a href = "{% url 'watchlist_remove' listing.id %}"> Remove this item from your watchlist. </a>
+                {% else %}
+                This item is not in your watchlist. 
+                <a href = "{% url 'watchlist_add' listing.id %}"> Add this item to your watchlist. </a>
+                {% endif %}
+            {% else %}
+                Register or sign in to add this item to your watchlist. 
+            {% endif  %}
+        </p>
+
+        <h4>  {{listing.title}}</h4>
+
+        <img class = "listing-image" src = "{{listing.image_url}}"  alt = "Image not found or could not load" >   
+
+
+        <p>   {% include 'auctions/listing_price.html' %}
+            --------- Number of Bids: {{listing.number_bids}}  </p>
+
+        {% if bid_message %}
+            <p> <em>    {{bid_message}}      </em> </p>
+        {% endif %}
+        
+        {% if listing.active and not user.is_authenticated  %}
+            <p> Please Register or Log in to bid on this item. </p>
+        {% endif  %}
+
+        {% if listing.active and user.is_authenticated and listing.listing_user == user %}
+            <p> You cannot bid on this item because you listed this item. </p>
+        {% endif %}
+
+        {% if listing.active and user.is_authenticated and listing.listing_user != user  %}
+            <form action = "{% url 'listing' listing.id  %}" method = "post" >
+                {% csrf_token %}
+                {{ new_bid_form }}
+                <input type = "submit">
+            </form>
+        {% endif %}
+
+        
+
+        <p> Category: {{category}} ---- Date/Time created: {{listing.created_datetime}} </p>
+
+        <p> Listing User: {{listing.listing_user.username}} --- 
+        {% if listing.active %}
+            This is an active listing.
+            {% else %}
+            This listing has been closed. 
+        {% endif %}
+        </p>
+
+        {% if close_listing_form %}
+            <p>
+                Close the current listing to sell it to the highest bidder. 
+            </p>
+            <form action = "{% url 'listing' listing.id  %}" method = "post" name = "close_listing">
+                {% csrf_token %}
+                {{  close_listing_form }}
+                <input type = "submit" value = "Click here to close the listing.">
+            </form>
+        {% endif %}
+
+        <hr>
+        <p>
+            Description of listing:
+            <br> {{listing.description}}
+        </p>
+        
+        {% if user.is_authenticated %}
+            <p>
+                Enter a comment: 
+            </p>
+            <form action = "{% url 'listing' listing.id %}" method = "post"> 
+                {% csrf_token %}
+                {{ comment_form }}
+                <input type = "submit">
+            </form>
+
+        {% endif %}
+
+
+        <p>
+            All Comments:
+        </p>
+        <ul>
+            {% for comment in comments %}
+            <li> Comment by: {{comment.user.username}} --- Date posted: {{comment.created_datetime}} 
+                <p>
+                {{comment.text}}
+                </p> </li>
+            {% endfor %}
+        </ul>
+
+    {% endif  %}
     
 {% endblock %}

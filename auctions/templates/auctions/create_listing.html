@@ -2,5 +2,15 @@
 
 {% block body %}
     
+{% if message %} 
+   <p>  {{message}}    </p> 
+{% endif %}
+
+<form action = "{% url 'create_listing' %}" method = "post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <input type = "submit">
+</form>
     
 {% endblock %}

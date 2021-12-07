@@ -20,16 +20,18 @@
             </div>
 
             <div class = 'listing-price'> 
-                Current price:    Number of Bids: $  {{ listing.bids.all }}
+                {% include 'auctions/listing_price.html' %}
+                
+                Number of Bids: {{listing.number_bids}}
             </div>
 
             <div class = 'listing-info'>
                 Description: {{ listing.description}}
                 <p>
                     {% if listing.active %}
-                        Active Listing
+                        <em> Active Listing </em>
                     {% else %}
-                        Inactive Listing  
+                        <em>  Inactive Listing    </em>
                     {% endif %}
                 </p>
             </div>
@@ -37,12 +39,17 @@
             </a>
         </div>
   
+    {% if message %}
+        <div>   {{message}}    </div>
+      
+    {% endif %}
 
-    {% if not message and empty %}
-    <div> 
-        {{ empty_message }}
-    </div>
-    {% endif %}   
+    {% empty %}
+        <div> 
+            {{ empty_message }} 
+        </div>
+  
+    
 
 
 

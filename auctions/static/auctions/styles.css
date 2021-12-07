@@ -2,6 +2,12 @@ body {
     padding: 10px;
 }
 
+.listing-image {
+    width : 50%;
+    display : block;
+    height: auto;
+    max-height: 500px; 
+}
 
 .flex-container{
     display:flex;

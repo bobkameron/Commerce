@@ -1,6 +1,20 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    
-    
+
+<h3 style = 'text-align:center;'>
+    {{heading}}
+</h3>
+
+<h4 style='text-align:center;'>
+    Click on a category to look at listings in the category 
+</h4>
+<div style = 'align-content:center;'>
+    <ul style = 'text-align:center;'>
+        {% for category in categories %}
+        <li> <a href = "{% url 'category' category.0 %}"  > {{category.1}}  </a>    </li>
+        {% endfor  %}
+    </ul>
+
+</div>    
 {% endblock %}

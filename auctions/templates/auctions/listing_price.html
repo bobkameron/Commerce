@@ -1,0 +1,10 @@
+
+
+
+
+Current price: $
+                {% if listing.highest_bid %}
+                    {{listing.highest_bid.amount}}
+                {% else %}
+                    {{listing.starting_price}}
+                {% endif  %}
