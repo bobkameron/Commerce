@@ -57,17 +57,18 @@ def watchlist_remove(request,listing_id):
 def create_listing(request):
     if request.method == "POST":
         form = NewListingForm( request.POST)
-        
+        starting_price = None 
         if form.is_valid():
             starting_price = form.cleaned_data['starting_price']
-            if starting_price >= 0: 
-                title, description, image_url, category =  form.cleaned_data['title'], form.cleaned_data['description'], \
-                    form.cleaned_data['image_url'], form.cleaned_data['category']  
 
-                new_listing = Listing(title = title, description = description, image_url = image_url, starting_price = starting_price,
-                category = category, listing_user = request.user)
-                new_listing.save()
-                return HttpResponseRedirect(reverse('index'))
+        if form.is_valid() and starting_price >= 0: 
+            title, description, image_url, category =  form.cleaned_data['title'], form.cleaned_data['description'], \
+                form.cleaned_data['image_url'], form.cleaned_data['category']  
+
+            new_listing = Listing(title = title, description = description, image_url = image_url, starting_price = starting_price,
+            category = category, listing_user = request.user)
+            new_listing.save()
+            return HttpResponseRedirect(reverse('index'))
         else:
             return render(request, "auctions/create_listing.html",{
                 'form': form, 
